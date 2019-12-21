@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">知识竞猜</string>
+    <string name="history_name">历史成绩</string>
+    <string name="add_ques_name">添加题目</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">许玉杰</string>
+    <string name="nav_header_subtitle">移动互联20170246150</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="menu_home">题库</string>
+    <string name="menu_gallery">Gallery</string>
+    <string name="menu_slideshow">Slideshow</string>
+    <string name="menu_exit">退出</string>
+    <string name="menu_share">Share</string>
+    <string name="menu_send">Send</string>
+</resources>
