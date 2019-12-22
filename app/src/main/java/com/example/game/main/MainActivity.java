@@ -100,16 +100,18 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             //设置标题
             this.setTitle("一起学习吧");
             mDBHelper = new DBHelper(this);
-            //将原始题库存储到数据库
+           //使用sharedpreferences判断是否已经加载过数据了
+            //向sharedpreferences中存储数据
             SharedPreferences flag = getSharedPreferences("flag", MODE_PRIVATE);
-            boolean iscreate = flag.getBoolean("iscreate", false);
             SharedPreferences.Editor edit = flag.edit();
             edit.putBoolean("iscreate",true);
+            //完成事务提交
             edit.commit();
-
+            //从sharedpreferences中提取数据
+            boolean iscreate = flag.getBoolean("iscreate", false);
             if(iscreate == false)
             {
-
+                //将原始题库存储到数据库
                 ContentValues contentValues = new ContentValues();
                 for (int i = 0; i < ques_array.length; i++) {
                     singleques = ques_array[i];
@@ -202,6 +204,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         Intent it_addques = new Intent(this, AddquesActivity.class);
         startActivity(it_addques);
     }
+    /*
+    重新加载当前界面
+     */
     public void reload(){
         Cursor cursor = mDBHelper.query(MainActivity.this, "Ques_tab");
         String[] from = {"_id", "Ques", "Answer"};
