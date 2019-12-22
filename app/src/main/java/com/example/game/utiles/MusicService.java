@@ -23,6 +23,7 @@ public class MusicService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         mPlayer = MediaPlayer.create(this, R.raw.music);
+        mPlayer.setLooping(true);
         mPlayer.start();
         Log.e("运行到这了","1");
         return super.onStartCommand(intent, flags, startId);

@@ -10,7 +10,6 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.util.Log;
 import android.view.View;
 
 import androidx.navigation.NavController;
@@ -25,7 +24,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.widget.AdapterView;
-import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
@@ -39,7 +37,7 @@ import com.example.game.utiles.MusicService;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements AdapterView.OnItemLongClickListener, View.OnClickListener, AdapterView.OnItemClickListener {
+public class MainActivity extends AppCompatActivity implements AdapterView.OnItemLongClickListener, View.OnClickListener {
     //准备题目资源
     static String[] ques_array = {
             "android虚拟设备的缩写是AVD",
@@ -58,16 +56,11 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     int score;
     int count = 0;
     int count_num = 1;
-    int cursorlength;
-    //使用cursorlength1暂存cursorlength的数据防止被置0
-    int cursorlength1;
     int[] random_ques_array = new int[20];
     ListView mListView;
     //判断播放器是否在播放
     int Flag_isplaying;
     TextView play;
-    TextView tv_sumques;
-    EditText ed_quescount;
     Dialogshowclass mDialogshowclass;
     String singleques;
     String singleanws;
@@ -84,7 +77,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this, AddquesActivity.class);
+                Intent intent = new Intent(MainActivity.this,AddquesActivity.class);
                 startActivity(intent);
             }
         });
@@ -100,29 +93,23 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
-
         {
             play = findViewById(R.id.bt_player);
-            tv_sumques = findViewById(R.id.tv_sumques);
-            ed_quescount = findViewById(R.id.ed_quescount);
             mListView = findViewById(R.id.list_main);
             mListView.setOnItemLongClickListener(this);
-            mListView.setOnItemClickListener(this);
-
             //设置标题
             this.setTitle("一起学习吧");
             mDBHelper = new DBHelper(this);
-            //使用sharedpreferences判断是否已经加载过数据了
-            //向sharedpreferences中存储数据
+            //将原始题库存储到数据库
             SharedPreferences flag = getSharedPreferences("flag", MODE_PRIVATE);
             boolean iscreate = flag.getBoolean("iscreate", false);
             SharedPreferences.Editor edit = flag.edit();
-            edit.putBoolean("iscreate", true);
-            //完成事务提交
+            edit.putBoolean("iscreate",true);
             edit.commit();
-            //从sharedpreferences中提取数据
-            if (iscreate == false) {
-                //将原始题库存储到数据库
+
+            if(iscreate == false)
+            {
+
                 ContentValues contentValues = new ContentValues();
                 for (int i = 0; i < ques_array.length; i++) {
                     singleques = ques_array[i];
@@ -147,43 +134,21 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     @Override
     public boolean onSupportNavigateUp() {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
-        return NavigationUI.navigateUp(navController, mAppBarConfiguration) || super.onSupportNavigateUp();
+        return NavigationUI.navigateUp(navController, mAppBarConfiguration)
+                || super.onSupportNavigateUp();
     }
 
     public void start(View view) {
-
-        /*
-        通过editview传入的参数判断是否为数字
-         */
-        if (isNumericZidai(ed_quescount.getText().toString())) {
-            System.out.println("String.valueOf(ed_quescount.getText()):"+ed_quescount.getText());
-            count_num = Integer.parseInt(String.valueOf(ed_quescount.getText()));
-            if (count_num <= cursorlength1&&count_num>0) {
-                mDialogshowclass = new Dialogshowclass(this, ques_array, result_array, count_num);
-
-                Log.e("count_num=", String.valueOf(count_num));
-                List list = new ArrayList();
-                List set = mDialogshowclass.Random_Num(count_num, ques_array.length, list);
-                ArrayList arrayList = new ArrayList<>(set);
-                for (int i = 0; i < arrayList.size(); i++) {
-                    random_ques_array[i] = (int) arrayList.get(i);
-                }
-                mDialogshowclass.Dialogshow(null, count, score, random_ques_array);
-                count = 0;
-                score = 0;
-            } if (count_num>cursorlength1){
-                Snackbar.make(play, "数量大于题库总数量！", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }else {
-                Snackbar.make(play, "测试数目不可小于1！", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        }
-        else {
-            Snackbar.make(play, "请输入正确数量！", Snackbar.LENGTH_LONG)
-                    .setAction("Action", null).show();
+        List list = new ArrayList();
+        List set = mDialogshowclass.Random_Num(count_num, ques_array.length, list);
+        ArrayList arrayList = new ArrayList<>(set);
+        for (int i = 0; i < arrayList.size(); i++) {
+            random_ques_array[i] = (int) arrayList.get(i);
         }
 
+        mDialogshowclass.Dialogshow(null, count, score, random_ques_array);
+        count = 0;
+        score = 0;
     }
 
     public void score(View view) {
@@ -211,6 +176,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     @Override
     public boolean onItemLongClick(AdapterView<?> parent, final View view, int position, final long id) {
 
+        mDialogshowclass = new Dialogshowclass(this, ques_array, result_array, count_num);
         AlertDialog.Builder builder = new AlertDialog.Builder(this)
                 .setTitle("提示！")
                 .setMessage("是否删除？")
@@ -219,8 +185,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     public void onClick(DialogInterface dialog, int which) {
                         mDBHelper.delete((int) id, "Ques_tab");
                         reload();
-                        Snackbar.make(view, "删除成功！", Snackbar.LENGTH_LONG)
-                                .setAction("Action", null).show();
+                        Toast.makeText(MainActivity.this, "删除成功", Toast.LENGTH_SHORT).show();
                     }
                 }).setNegativeButton("否", new DialogInterface.OnClickListener() {
                     @Override
@@ -237,25 +202,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         Intent it_addques = new Intent(this, AddquesActivity.class);
         startActivity(it_addques);
     }
-
-    /*
-    重新加载当前界面
-     */
-    public void reload() {
+    public void reload(){
         Cursor cursor = mDBHelper.query(MainActivity.this, "Ques_tab");
-        //获取cursor的长度
-        if (cursor.moveToFirst()) {
-            cursorlength++;
-            while (cursor.moveToNext()) {
-                cursorlength++;
-            }
-        }
-        cursorlength1 = cursorlength;
-        tv_sumques.setText("题库数量共" + cursorlength);
-        //初始化题目数量
-        cursorlength = 0;
-
-        Log.e("cursorlength=", cursorlength + "");
         String[] from = {"_id", "Ques", "Answer"};
         int[] to = {R.id.item_num, R.id.item_text, R.id.item_answer};
         //使用SimpleAdapter填充ListView
@@ -265,20 +213,4 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         mDialogshowclass = new Dialogshowclass(MainActivity.this, ques_array, result_array, count_num);
     }
 
-    //判断传入的字符串是否可以转换为数字
-    public static boolean isNumericZidai(String str) {
-        for (int i = 0; i < str.length(); i++) {
-            System.out.println(str.charAt(i));
-            if (!Character.isDigit(str.charAt(i))) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        reload();
-
-    }
 }
