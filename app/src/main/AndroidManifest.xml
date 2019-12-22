@@ -4,19 +4,19 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/icon"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <service
-            android:name="com.example.androidgame.utiles.MusicService"
+            android:name="com.example.game.utiles.MusicService"
             android:enabled="true"
             android:exported="true"></service>
 
-        <activity android:name="com.example.androidgame.main.HistoryActivity"
+        <activity android:name="com.example.game.main.HistoryActivity"
             android:label="@string/history_name" />
-        <activity android:name="com.example.androidgame.main.AddquesActivity"
+        <activity android:name="com.example.game.main.AddquesActivity"
             android:label="@string/add_ques_name" />
         <activity
             android:name=".main.MainActivity"

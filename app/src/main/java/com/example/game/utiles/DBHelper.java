@@ -66,6 +66,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
             update();
             System.out.println("删除成功");
+
             database.close();
 //        }
     }

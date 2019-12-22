@@ -2,8 +2,10 @@ package com.example.game.main;
 
 import android.app.AlertDialog;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -35,7 +37,7 @@ import com.example.game.utiles.MusicService;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements AdapterView.OnItemLongClickListener, View.OnClickListener{
+public class MainActivity extends AppCompatActivity implements AdapterView.OnItemLongClickListener, View.OnClickListener {
     //准备题目资源
     static String[] ques_array = {
             "android虚拟设备的缩写是AVD",
@@ -75,8 +77,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                Intent intent = new Intent(MainActivity.this,AddquesActivity.class);
+                startActivity(intent);
             }
         });
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
@@ -91,40 +93,43 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
+        {
+            play = findViewById(R.id.bt_player);
+            mListView = findViewById(R.id.list_main);
+            mListView.setOnItemLongClickListener(this);
+            //设置标题
+            this.setTitle("一起学习吧");
+            mDBHelper = new DBHelper(this);
+            //将原始题库存储到数据库
+            SharedPreferences flag = getSharedPreferences("flag", MODE_PRIVATE);
+            boolean iscreate = flag.getBoolean("iscreate", false);
+            SharedPreferences.Editor edit = flag.edit();
+            edit.putBoolean("iscreate",true);
+            edit.commit();
 
-        play = findViewById(R.id.bt_player);
-        mListView = findViewById(R.id.list_main);
-        mListView.setOnItemLongClickListener(this);
-        //设置标题
-        this.setTitle("一起学习吧");
-        //将原始题库存储到数据库
-        mDBHelper = new DBHelper(this);
-        ContentValues contentValues = new ContentValues();
-        for (int i = 0; i < ques_array.length; i++) {
-            singleques = ques_array[i];
-            singleanws = result_array[i];
-            contentValues.put("Ques", singleques);
-            contentValues.put("Answer", singleanws);
-            mDBHelper.insert(contentValues, "Ques_tab");
+            if(iscreate == false)
+            {
+
+                ContentValues contentValues = new ContentValues();
+                for (int i = 0; i < ques_array.length; i++) {
+                    singleques = ques_array[i];
+                    singleanws = result_array[i];
+                    contentValues.put("Ques", singleques);
+                    contentValues.put("Answer", singleanws);
+                    mDBHelper.insert(contentValues, "Ques_tab");
+                }
+            }
+            //查询数据库的题目表 将数据输入到ListView
+            reload();
         }
-
-        //查询数据库的题目表 将数据输入到ListView
-
-        Cursor cursor = mDBHelper.query(this, "Ques_tab");
-        String[] from = {"_id", "Ques", "Answer"};
-        int[] to = {R.id.item_num, R.id.item_text, R.id.item_answer};
-        //使用SimpleAdapter填充ListView
-        SimpleCursorAdapter simpleAdapter = new SimpleCursorAdapter(this, R.layout.mainlist_item, cursor, from, to, 1);
-        mListView.setAdapter(simpleAdapter);
-        mDialogshowclass = new Dialogshowclass(this, ques_array, result_array, count_num);
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
-    }
+    //    @Override
+    //    public boolean onCreateOptionsMenu(Menu menu) {
+    //        // Inflate the menu; this adds items to the action bar if it is present.
+    //        getMenuInflater().inflate(R.menu.main, menu);
+    //        return true;
+    //    }
 
     @Override
     public boolean onSupportNavigateUp() {
@@ -132,6 +137,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         return NavigationUI.navigateUp(navController, mAppBarConfiguration)
                 || super.onSupportNavigateUp();
     }
+
     public void start(View view) {
         List list = new ArrayList();
         List set = mDialogshowclass.Random_Num(count_num, ques_array.length, list);
@@ -168,7 +174,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     }
 
     @Override
-    public boolean onItemLongClick(AdapterView<?> parent, View view, int position, final long id) {
+    public boolean onItemLongClick(AdapterView<?> parent, final View view, int position, final long id) {
 
         mDialogshowclass = new Dialogshowclass(this, ques_array, result_array, count_num);
         AlertDialog.Builder builder = new AlertDialog.Builder(this)
@@ -178,7 +184,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         mDBHelper.delete((int) id, "Ques_tab");
-
+                        reload();
                         Toast.makeText(MainActivity.this, "删除成功", Toast.LENGTH_SHORT).show();
                     }
                 }).setNegativeButton("否", new DialogInterface.OnClickListener() {
@@ -196,4 +202,15 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         Intent it_addques = new Intent(this, AddquesActivity.class);
         startActivity(it_addques);
     }
+    public void reload(){
+        Cursor cursor = mDBHelper.query(MainActivity.this, "Ques_tab");
+        String[] from = {"_id", "Ques", "Answer"};
+        int[] to = {R.id.item_num, R.id.item_text, R.id.item_answer};
+        //使用SimpleAdapter填充ListView
+        SimpleCursorAdapter simpleAdapter = new SimpleCursorAdapter(MainActivity.this, R.layout.mainlist_item, cursor, from, to, 1);
+        simpleAdapter.notifyDataSetChanged();
+        mListView.setAdapter(simpleAdapter);
+        mDialogshowclass = new Dialogshowclass(MainActivity.this, ques_array, result_array, count_num);
+    }
+
 }
