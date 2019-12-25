@@ -23,7 +23,7 @@ public class HistoryActivity extends AppCompatActivity implements View.OnClickLi
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_history);
+        setContentView(R.layout.fragment_history);
 
         listhistory = findViewById(R.id.list_history);
         listhistory.setOnItemLongClickListener(this);

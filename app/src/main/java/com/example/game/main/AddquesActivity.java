@@ -23,7 +23,7 @@ String singleanswer;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_addques);
+        setContentView(R.layout.fragment_addques);
         btnadd=findViewById(R.id.btn_add);
         edtques=findViewById(R.id.edt_addques);
         edtansw=findViewById(R.id.edt_addanswer);
@@ -39,6 +39,7 @@ String singleanswer;
     public boolean onOptionsItemSelected(MenuItem item) {
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
+
         return super.onOptionsItemSelected(item);
     }
 

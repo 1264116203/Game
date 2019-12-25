@@ -24,37 +24,37 @@ public class DBHelper extends SQLiteOpenHelper {
     private Cursor cursor;
     int update_id;
     int _idMAX;
+    private SQLiteDatabase mDatabase;
 
     public DBHelper(@Nullable Context context) {
         super(context, DBname, null, version);
     }
-
+//创建两张表  题库表和历史成绩表
     @Override
     public void onCreate(SQLiteDatabase db) {
         this.history_DB = db;
-        history_DB.execSQL("create table Score_tab (_id integer primary key ,Score integer,Date varchr(40),time not null default current_timestamp )");
+        history_DB.execSQL("create table Score_tab (_id integer primary key ,Score integer,Date varchr(40),Time    DATETIME DEFAULT (  datetime( 'now', 'localtime' )   ) )");
         history_DB.execSQL("create table Ques_tab (_id integer primary key ,Ques varchar(40),Answer varchar(10) )");
 
     }
-
+//当有版本更新时的操作
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
     }
-
+//插入数据
     public void insert(ContentValues values, String TABname) {
         SQLiteDatabase database = getWritableDatabase();
         database.insert(TABname, null, values);
         database.close();
     }
-
+//查询数据
     public Cursor query(Context context,String table) {
         //判断是否创建了表 没有则toast
-        SQLiteDatabase database = getWritableDatabase();
-        cursor = database.query(table, null, null,
+        mDatabase = getWritableDatabase();
+        cursor = mDatabase.query(table, null, null,
                 null, null, null, null);
 //        cursor.close();
-//        database.close();
         return cursor;
     }
 
@@ -82,6 +82,11 @@ public class DBHelper extends SQLiteOpenHelper {
             if (cursor2.moveToFirst()) {
                  _idMAX = cursor2.getInt(cursor2.getColumnIndex("_id"))+1;
             }
+    }
+    public void close(){
+        if (mDatabase!=null){
+            mDatabase.close();
+        }
 
 
     }

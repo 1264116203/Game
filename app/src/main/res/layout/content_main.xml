@@ -7,7 +7,7 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:showIn="@layout/app_bar_main">
 
-    <LinearLayout
+       <LinearLayout
 
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -35,8 +35,7 @@
                 android:layout_weight="1"
                 android:ems="10"
                 android:hint="请输入要测试的题目数量"
-                android:inputType="textPersonName"
-                android:text="0" />
+                android:inputType="textPersonName" />
         </LinearLayout>
 
         <ListView
