@@ -33,29 +33,27 @@
 
         </LinearLayout>
 
-        <LinearLayout
+        <RadioGroup
+            android:id="@+id/rg_view"
+
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
-            <TextView
-                android:id="@+id/textView6"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="20dp"
-
-                android:layout_weight="1"
-                android:text="请输入对应答案 -" />
-
-            <EditText
-                android:id="@+id/edt_addanswer"
+            <RadioButton
+                android:id="@+id/rbtn_ok"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:ems="10"
-                android:hint="答案取值只能为 是 或 不是！"
-                android:inputType="textPersonName" />
-        </LinearLayout>
+                android:text="是" />
+
+            <RadioButton
+                android:id="@+id/rbtn_cancel"
+                android:layout_weight="1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="不是" />
+        </RadioGroup>
 
         <Button
             android:id="@+id/btn_add"

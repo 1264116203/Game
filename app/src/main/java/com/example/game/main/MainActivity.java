@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -109,7 +110,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(MainActivity.this, AddquesActivity.class);
-                //使用startActivityForResult()进行跳转 来进行数据回调
                 startActivityForResult(intent,1);
             }
         });
@@ -291,6 +291,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             }
         }
         cursorlength1 = cursorlength;
+        tv_sumques.setTextColor(Color.RED);
         tv_sumques.setText("题库数量共" + cursorlength);
         //初始化题目数量
         cursorlength = 0;
@@ -319,7 +320,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        //根据使用startActivityForResult的resultcode判断是否为AddquesActivity.java返回的  并刷新当前界面
       if (requestCode==1){
           reload();
       }
